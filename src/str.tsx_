@@ -1,0 +1,37 @@
+import { create } from 'zustand';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { BlockList } from 'net';
+
+interface AppState {
+  api: ApiPromise | null;
+  accounts: InjectedAccountWithMeta[];
+  selectedAccount: InjectedAccountWithMeta | undefined;
+  selectedAddress: string;
+  blocks: string;
+}
+
+const useStore = create<AppState>((set) => ({
+  api: null,
+  accounts: [],
+  selectedAccount: undefined,
+  selectedAddress: '',
+  blocks: '',
+  set_api: async () => {
+    const wsProvider = new WsProvider('ws://127.0.0.1:9944');
+    set({ api: await ApiPromise.create({ provider: wsProvider }) });
+  },
+  set_accounts: async () => {
+    set({ accounts: await web3Accounts() });
+  },
+  set_selected_account: (account: InjectedAccountWithMeta) => set({ selectedAccount: account }),
+  set_selected_address: (address: string) => set({ selectedAddress: address }),
+  /*set_blocks: (api: ApiPromise) =>
+    set((state) => {
+      if (state.api === null) return;
+      const bl = state.api.query.system.number((block: number) => {
+        state.blocks = block.toString();
+      });
+    }),*/
+}));
