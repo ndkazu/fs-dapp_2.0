@@ -2,9 +2,15 @@ import React, { useEffect } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import BN from 'bn.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
+const treasury_address = '5EYCAe5ijiYfyeZ2JJCGq56LmPyNRAKzpG4QkoQkkQNB5e6Z';
+function toUnit(balance: BN, decimals: number) {
+  let base = new BN(10).pow(new BN(decimals));
+  let dm = new BN(balance).divmod(base);
+  return parseFloat(dm.div.toString() + '.' + dm.mod.toString());
+}
 export default function Dashboard() {
   const {
     api,
@@ -14,6 +20,7 @@ export default function Dashboard() {
     seller_nbr,
     awaiting_seller_nbr,
     tenant_nbr,
+    treasury_balance,
     dispatch,
   } = useAppContext();
 
@@ -27,6 +34,13 @@ export default function Dashboard() {
       const tenant_nbr = (await api.query.rolesModule.tenantLog.entries()).length as number;
       console.log(tenant_nbr.toString);
       dispatch({ type: 'SET_TENANTS_NBR', payload: tenant_nbr });
+
+      await api.query.system.account(treasury_address, ({ data: free }: { data: { free: BN } }) => {
+        let { free: balance1 } = free;
+        let decimals = toUnit(balance1, 4);
+        console.log('BALANCE:' + decimals.toString());
+        dispatch({ type: 'SET_TREASURY_BALANCE', payload: balance1 });
+      });
 
       const sellerApprovalListRaw = await api.query.rolesModule.sellerApprovalList();
 
@@ -72,11 +86,12 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col">
-      <div>DASHBOARD</div>
-      <div className="font-bold text-xl">Total Number of Users: {total_users_nbr}</div>
-      <div>
-        <Pie data={data} />
-      </div>
+      <h1 className="text-3xl text-slate-700 font-bold">DASHBOARD</h1>
+      <p className="text-xl font-bold">
+        House Fund: {!treasury_balance ? '0' : toUnit(treasury_balance, 3).toString()}
+      </p>
+      <p className="text-xl font-bold">Total Number of Users: {total_users_nbr}</p>
+      <Pie data={data} />
     </div>
   );
 }

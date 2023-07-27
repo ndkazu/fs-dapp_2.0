@@ -2,7 +2,6 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { ChangeEvent, useEffect } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
-import Identicon from '@polkadot/react-identicon';
 
 const NAME = 'fs-dapp';
 
@@ -56,10 +55,6 @@ function AccountModal() {
     });
   }, [api, selectedAccount, dispatch]);
 
-  const size = 30;
-
-  const theme = 'polkadot';
-
   return (
     <div>
       {accounts.length === 0 ? (
@@ -91,14 +86,8 @@ function AccountModal() {
       {selectedAccount ? (
         <button
           onClick={handleConnectionChange}
-          className="flex flex-row rounded-md bg-green-800 text-white px-4 py-1 font-bold"
+          className="rounded-md bg-green-800 text-white px-4 py-1"
         >
-          <Identicon
-            value={selectedAccount.address}
-            size={size}
-            theme={theme}
-            className="px-1 justify-center align-middle"
-          />
           {' ' +
             selectedAccount.meta.name +
             ' | ' +

@@ -2,6 +2,7 @@ import { createContext, useContext, useReducer, ReactNode } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { AppState } from './types';
+import BN from 'bn.js';
 
 const initialState: AppState = {
   api: null,
@@ -14,6 +15,7 @@ const initialState: AppState = {
   seller_nbr: 0,
   awaiting_seller_nbr: 0,
   tenant_nbr: 0,
+  treasury_balance: undefined,
 };
 
 type Action =
@@ -26,7 +28,8 @@ type Action =
   | { type: 'SET_SELLERS_NBR'; payload: number }
   | { type: 'SET_A_SELLERS_NBR'; payload: number }
   | { type: 'SET_TENANTS_NBR'; payload: number }
-  | { type: 'SET_TOTAL'; payload: number };
+  | { type: 'SET_TOTAL'; payload: number }
+  | { type: 'SET_TREASURY_BALANCE'; payload: BN };
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -50,6 +53,8 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, tenant_nbr: action.payload };
     case 'SET_TOTAL':
       return { ...state, total_users_nbr: action.payload };
+    case 'SET_TREASURY_BALANCE':
+      return { ...state, treasury_balance: action.payload };
 
     default:
       return state;
@@ -80,6 +85,7 @@ export function AppProvider({ children }: Props) {
       seller_nbr,
       awaiting_seller_nbr,
       tenant_nbr,
+      treasury_balance,
     },
     dispatch,
   ] = useReducer(reducer, initialState);
@@ -96,6 +102,7 @@ export function AppProvider({ children }: Props) {
         seller_nbr,
         awaiting_seller_nbr,
         tenant_nbr,
+        treasury_balance,
         dispatch,
       }}
     >
