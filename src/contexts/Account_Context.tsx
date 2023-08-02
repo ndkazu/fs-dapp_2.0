@@ -1,6 +1,4 @@
 import { createContext, useContext, useReducer, ReactNode } from 'react';
-import { ApiPromise } from '@polkadot/api';
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { AccountContextState } from './types';
 import BN from 'bn.js';
 
