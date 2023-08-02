@@ -3,14 +3,10 @@ import { useAppContext } from '../../contexts/AppContext';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import BN from 'bn.js';
-
+import { toUnit } from '../shared/utils';
 ChartJS.register(ArcElement, Tooltip, Legend);
 const treasury_address = '5EYCAe5ijiYfyeZ2JJCGq56LmPyNRAKzpG4QkoQkkQNB5e6Z';
-function toUnit(balance: BN, decimals: number) {
-  let base = new BN(10).pow(new BN(decimals));
-  let dm = new BN(balance).divmod(base);
-  return parseFloat(dm.div.toString() + '.' + dm.mod.toString());
-}
+
 export default function Dashboard() {
   const {
     api,

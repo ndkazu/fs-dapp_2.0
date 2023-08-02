@@ -3,7 +3,7 @@ import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 
 export type Address = string | undefined;
-export type AccountRole = string | undefined;
+export type AccountRole = string[];
 export interface AppState {
   api: ApiPromise | null;
   accounts: InjectedAccountWithMeta[];
@@ -18,15 +18,19 @@ export interface AppState {
   treasury_balance: BN | undefined;
 }
 
-export interface AccountContextInterface {
+export interface AccountContextState {
   address: Address;
   role: AccountRole;
-  balance: BN;
-  isSeller: () => boolean;
-  isInvestor: () => boolean;
-  isNotary: () => boolean;
-  isTenant: () => boolean;
-  isRepresentative: () => boolean;
+  balance: BN | undefined;
+}
+
+export interface CouncilSessionContextState {
+  approved: boolean;
+  role: AccountRole;
+  session_closed: boolean;
+  ayes: number;
+  nay: number;
+  council_members: InjectedAccountWithMeta[];
 }
 
 export const isRoleValid = (_role: string): boolean => {
