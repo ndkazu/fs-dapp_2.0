@@ -1,48 +1,72 @@
-import '@polkadot/api-augment';
-import '@polkadot/api-augment/polkadot';
-import { useAccountContext } from '../..//contexts/Account_Context';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { useAccountContext } from '../../contexts/Account_Context';
 import React, { useEffect } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
 import { useConcilSessionContext } from '../../contexts/CouncilSessionContext';
 import BN from 'bn.js';
-import { AnyJson, Codec } from '@polkadot/types-codec/types';
+import { toUnit } from '../shared/utils';
 
 export default function Roles() {
-  const { api, blocks, selectedAccount } = useAppContext();
+  const { api, blocks, selectedAccount, selectedAddress, dispatch } = useAppContext();
 
   const { address, role, balance, dispatch0 } = useAccountContext();
 
-  const { approved, session_closed, ayes, nay, council_members, dispatch1 } =
+  const { approved, session_closed, ayes, nay, role_in_session, council_members, dispatch1 } =
     useConcilSessionContext();
 
   useEffect(() => {
     if (!api || !selectedAccount) return;
-    let add = selectedAccount.address.toString();
-    /*get user balance */
-    api.query.system.account(add, ({ data: free }: { data: { free: BN } }) => {
+
+    const address0 = selectedAccount.address;
+
+    dispatch0({ type: 'SET_ADDRESS', payload: address0 });
+    api.query.rolesModule.accountsRolesLog(address, (roles: string[]) => {
+      let rl = roles;
+      console.log('role:' + rl);
+      dispatch0({ type: 'SET_ROLES', payload: rl });
+    });
+
+    api.query.system.account(address, ({ data: free }: { data: { free: BN } }) => {
       let { free: balance1 } = free;
+
       dispatch0({ type: 'SET_BALANCE', payload: balance1 });
     });
 
-    dispatch0({ type: 'SET_ADDRESS', payload: add });
-    api.query.rolesModule.accountsRolesLog(add, (roles: string[]) => {
-      let rl = roles;
-      dispatch0({ type: 'SET_ROLES', payload: rl });
+    api.query.rolesModule.requestedRoles(address0, (data: any) => {
+      let data0 = data.toHuman();
+      let r_session = data0?.role.toString();
+      let approval = data0?.approved;
+      let closed = data0?.sessionClosed;
+      dispatch1({ type: 'SET_ROLE_IN_SESSION', payload: r_session });
+      dispatch1({ type: 'SET_APPROVAL', payload: approval });
+      dispatch1({ type: 'SET_SESSION_CLOSE', payload: closed });
     });
-  }, [selectedAccount, api, dispatch0, blocks]);
 
-  useEffect(() => {
-    if (!api || !selectedAccount) return;
-    let add = selectedAccount.address;
-    /*requested role */
-    api.query.rolesModule.requestedRoles(
-      add,
-      ({ block, role }: { block: number; role: string }) => {
-        let data0 = block;
-        let data1 = role;
-        console.log('In session:' + data0 + ' & ' + data1);
-      },
-    );
-  });
-  return <div>Roles</div>;
+    api.query.council.members((who: InjectedAccountWithMeta[]) => {
+      dispatch1({ type: 'SET_COUNCIL_MEMBERS', payload: who });
+    });
+    api.query.backgroundCouncil.proposals((hash: string[]) => {
+      let hash0 = hash[0];
+      api.query.backgroundCouncil.voting(hash0, (data: any) => {
+        let data1 = data.toHuman();
+        let yes = data1.ayes.length;
+        let no = data1.nays.length;
+        dispatch1({ type: 'SET_AYES', payload: yes });
+        dispatch1({ type: 'SET_NAY', payload: no });
+      });
+    });
+  }, [blocks, dispatch0, api, address, dispatch1, selectedAccount]);
+
+  return (
+    <div className="flex flex-col py-4 justify-evenly">
+      <div className="flex flex-row justify-evenly">
+        <h1>Your Balance: {!balance ? '0' : toUnit(balance, 3).toString()}</h1>
+        <button>Get A Role</button>
+      </div>
+      <div className="flex flex-row justify-evenly">
+        <h1>Your Roles: {!(role.length > 0) ? 'None' : role.toString()}</h1>
+        Your Requested Role: {role_in_session}
+      </div>
+    </div>
+  );
 }

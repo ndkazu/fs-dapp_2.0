@@ -3,7 +3,7 @@ import { AccountContextState } from './types';
 import BN from 'bn.js';
 
 const initialAccount: AccountContextState = {
-  address: undefined,
+  address: '',
   role: [],
   balance: undefined,
 };
