@@ -7,7 +7,7 @@ import {
   MdRoomService,
   MdSupervisorAccount,
 } from 'react-icons/md';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const logo = require('../../assets/android-chrome-192x192.png');
 export default function SideBar() {
@@ -18,7 +18,9 @@ export default function SideBar() {
     >
       <Sidebar.Items className="bg-pink-700 ">
         <Sidebar.ItemGroup>
-          <img src={logo} alt="FairSquares logo" width={100} height={100} />
+          <Link to="./">
+            <img src={logo} alt="FairSquares logo" width={100} height={100} />
+          </Link>
         </Sidebar.ItemGroup>
         <Sidebar.ItemGroup>
           <Sidebar.Item labelColor="white" href="#" icon={MdDashboard} className="p-3">

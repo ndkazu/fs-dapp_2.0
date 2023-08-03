@@ -26,7 +26,7 @@ export interface AccountContextState {
 
 export interface CouncilSessionContextState {
   approved: boolean;
-  role: AccountRole;
+  role_in_session: string;
   session_closed: boolean;
   ayes: number;
   nay: number;
