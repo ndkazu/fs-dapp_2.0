@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 function HomePage() {
   return (
     <div>
-      <NavLink to="dashboard">HomePage</NavLink>
+      <NavLink to="dashboard">Go to Dashboard</NavLink>
     </div>
   );
 }

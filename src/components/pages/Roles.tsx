@@ -46,26 +46,31 @@ export default function Roles() {
       dispatch1({ type: 'SET_COUNCIL_MEMBERS', payload: who });
     });
     api.query.backgroundCouncil.proposals((hash: string[]) => {
-      let hash0 = hash[0];
-      api.query.backgroundCouncil.voting(hash0, (data: any) => {
-        let data1 = data.toHuman();
-        let yes = data1.ayes.length;
-        let no = data1.nays.length;
-        dispatch1({ type: 'SET_AYES', payload: yes });
-        dispatch1({ type: 'SET_NAY', payload: no });
-      });
+      if (hash.length > 0) {
+        let hash0 = hash[0];
+
+        api.query.backgroundCouncil.voting(hash0, (data: any) => {
+          let data1 = data.toHuman();
+          let yes = data1.ayes.length;
+          let no = data1.nays.length;
+          dispatch1({ type: 'SET_AYES', payload: yes });
+          dispatch1({ type: 'SET_NAY', payload: no });
+        });
+      }
     });
   }, [blocks, dispatch0, api, address, dispatch1, selectedAccount]);
 
   return (
     <div className="flex flex-col py-4 justify-evenly">
-      <div className="flex flex-row justify-evenly">
+      <div className="flex flex-row basis-1/3 justify-between">
         <h1>Your Balance: {!balance ? '0' : toUnit(balance, 3).toString()}</h1>
-        <button>Get A Role</button>
+        <button className="rounded-md bg-green-700 text-white px-4 py-1 text-xl font-bold">
+          Get A Role
+        </button>
       </div>
       <div className="flex flex-row justify-evenly">
         <h1>Your Roles: {!(role.length > 0) ? 'None' : role.toString()}</h1>
-        Your Requested Role: {role_in_session}
+        Your Requested Role: {!role_in_session ? 'None' : role_in_session}
       </div>
     </div>
   );
