@@ -5,6 +5,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { useConcilSessionContext } from '../../contexts/CouncilSessionContext';
 import BN from 'bn.js';
 import { toUnit } from '../shared/utils';
+import RolesApp from '../shared/modal';
 
 export default function Roles() {
   const { api, blocks, selectedAccount, selectedAddress, dispatch } = useAppContext();
@@ -64,12 +65,15 @@ export default function Roles() {
     <div className="flex flex-col py-4 justify-evenly">
       <div className="flex flex-row basis-1/3 justify-between">
         <h1>Your Balance: {!balance ? '0' : toUnit(balance, 3).toString()}</h1>
-        <button className="rounded-md bg-green-700 text-white px-4 py-1 text-xl font-bold">
-          Get A Role
-        </button>
+        <RolesApp />
       </div>
       <div className="flex flex-row justify-evenly">
-        <h1>Your Roles: {!(role.length > 0) ? 'None' : role.toString()}</h1>
+        <h1>
+          Your Roles:{' '}
+          {!(role.length > 0)
+            ? 'None'
+            : role.map((value: string, index: number) => <p key={index}>{value}</p>)}
+        </h1>
         Your Requested Role: {!role_in_session ? 'None' : role_in_session}
       </div>
     </div>
