@@ -4,9 +4,11 @@ import { useAccountContext } from '../../contexts/Account_Context';
 import { useAppContext } from '../../contexts/AppContext';
 import { ROLES } from '../../contexts/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
+import { Toast } from 'flowbite-react';
 
 const RolesApp: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const [event, setEvents] = useState('');
   const { api, selectedAccount } = useAppContext();
   const { role } = useAccountContext();
 
@@ -25,9 +27,13 @@ const RolesApp: React.FC = () => {
       let who = selectedAccount.address;
       const tx = await api.tx.rolesModule.setRole(who, ROLES[num].toString());
       const injector = await web3FromAddress(who);
-      tx.signAndSend(who, { signer: injector.signer }, ({ status }) => {
+      tx.signAndSend(who, { signer: injector.signer }, ({ status, events = [], dispatchError }) => {
         if (status.isInBlock) {
           console.log(`Completed at block hash #${status.asInBlock.toString()}`);
+
+          events.forEach(({ event: { data, method, section }, phase }) => {
+            console.log('\t' + phase.toString() + `: ${section}.${method}` + data.toString());
+          });
         } else {
           console.log(`Current status: ${status.type}`);
         }
@@ -44,7 +50,13 @@ const RolesApp: React.FC = () => {
       </Button>
       <Drawer title="Basic Drawer" placement="right" onClose={onClose} open={open}>
         <p>
-          <Button type="primary" className="bg-pink-600 rounded" onClick={() => getRole(0)}>
+          <Button
+            type="primary"
+            className="bg-pink-600 rounded"
+            onClick={() => {
+              getRole(0);
+            }}
+          >
             {ROLES[0].toString()}
           </Button>
         </p>

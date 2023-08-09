@@ -23,7 +23,6 @@ export default function Roles() {
     dispatch0({ type: 'SET_ADDRESS', payload: address0 });
     api.query.rolesModule.accountsRolesLog(address, (roles: string[]) => {
       let rl = roles;
-      console.log('role:' + rl);
       dispatch0({ type: 'SET_ROLES', payload: rl });
     });
 
