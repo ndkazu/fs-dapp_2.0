@@ -72,7 +72,7 @@ export default function Roles() {
           Your Roles:{' '}
           {!(role.length > 0)
             ? 'None'
-            : role.map((value: string, index: number) => <p key={index}>{value}</p>)}
+            : role.map((value: string, index: number) => <p key={index}>{value.toString()}</p>)}
         </h1>
         Your Requested Role: {!role_in_session ? 'None' : role_in_session}
       </div>
