@@ -61,10 +61,9 @@ export default function Roles() {
   }, [blocks, dispatch0, api, address, dispatch1, selectedAccount]);
 
   return (
-    <div className="flex flex-col py-4 justify-evenly">
+    <div className="flex flex-col py-5 justify-evenly">
       <div className="flex flex-row basis-1/3 justify-between">
         <h1>Your Balance: {!balance ? '0' : toUnit(balance, 3).toString()}</h1>
-        <RolesApp />
       </div>
       <div className="flex flex-row justify-evenly">
         <h1>
@@ -74,6 +73,11 @@ export default function Roles() {
             : role.map((value: string, index: number) => <p key={index}>{value.toString()}</p>)}
         </h1>
         Your Requested Role: {!role_in_session ? 'None' : role_in_session}
+      </div>
+      <br />
+      <br />
+      <div className="flex flex-row items-start space-x-3 ">
+        <RolesApp />
       </div>
     </div>
   );
