@@ -42,7 +42,7 @@ const RolesApp: React.FC = () => {
 
             console.log(`${section}.${name}: ${docs.join(' ')}`);
           }
-        } else if (status.isFinalized) {
+        } else if (status.isFinalized || status.isInBlock) {
           console.log(`Current status: ${status.type}`);
           events.forEach(({ event: { method, section } }) => {
             if (section.toString().includes('rolesModule')) {
@@ -117,18 +117,6 @@ const RolesApp: React.FC = () => {
         <p>
           <Button type="primary" className="bg-pink-600 rounded" onClick={() => getRole(3)}>
             {ROLES[3].toString()}
-          </Button>
-        </p>
-        <br />
-        <p>
-          <Button type="primary" className="bg-pink-600 rounded" onClick={() => getRole(4)}>
-            {ROLES[4].toString()}
-          </Button>
-        </p>
-        <br />
-        <p>
-          <Button type="primary" className="bg-pink-600 rounded" onClick={() => getRole(5)}>
-            {ROLES[5].toString()}
           </Button>
         </p>
       </Drawer>

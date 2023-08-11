@@ -16,6 +16,8 @@ export default function Dashboard() {
     inv_nbr,
     seller_nbr,
     awaiting_seller_nbr,
+    servicer_nbr,
+    awaiting_servicer_nbr,
     tenant_nbr,
     treasury_balance,
     selectedAccount,
@@ -30,48 +32,65 @@ export default function Dashboard() {
       dispatch({ type: 'SET_TREASURY_BALANCE', payload: balance1 });
     });
 
-    (async () => {
-      const inv_nbr = (await api.query.rolesModule.investorLog.entries()).length as number;
-      dispatch({ type: 'SET_INVESTORS_NBR', payload: inv_nbr });
+    api.query.rolesModule.investorLog.entries((data: any) => {
+      dispatch({ type: 'SET_INVESTORS_NBR', payload: data.length });
+    });
+    api.query.rolesModule.tenantLog.entries((data: any) => {
+      dispatch({ type: 'SET_TENANTS_NBR', payload: data.length });
+    });
 
-      const tenant_nbr = (await api.query.rolesModule.tenantLog.entries()).length as number;
-      dispatch({ type: 'SET_TENANTS_NBR', payload: tenant_nbr });
+    api.query.rolesModule.sellerApprovalList((data: any) => {
+      dispatch({ type: 'SET_A_SELLERS_NBR', payload: data.length });
+    });
 
-      const sellerApprovalListRaw = await api.query.rolesModule.sellerApprovalList();
+    api.query.rolesModule.houseSellerLog.entries((data: []) => {
+      dispatch({ type: 'SET_SELLERS_NBR', payload: data.length });
+    });
 
-      const awaiting_seller_nbr = JSON.stringify(sellerApprovalListRaw)
-        .split(/[\]}{[]+/)
-        .filter((str) => str !== '')
-        .filter((str) => str !== ',');
-      dispatch({ type: 'SET_A_SELLERS_NBR', payload: awaiting_seller_nbr.length });
+    api.query.rolesModule.servicerApprovalList((data: any) => {
+      dispatch({ type: 'SET_A_SERVICER_NBR', payload: data.length });
+    });
 
-      const seller_nbr = (await api.query.rolesModule.houseSellerLog.entries()).length as number;
-      dispatch({ type: 'SET_SELLERS_NBR', payload: seller_nbr });
+    api.query.rolesModule.servicerLog.entries((data: any) => {
+      dispatch({ type: 'SET_SERVICER_NBR', payload: data.length });
+    });
 
-      const total_users_nbr = (await api.query.rolesModule.totalMembers()).toPrimitive() as number;
-      dispatch({ type: 'SET_TOTAL', payload: total_users_nbr });
-    })();
-  }, [api, blocks, dispatch]);
+    api.query.rolesModule.totalMembers((data: number) => {
+      let data1 = Number(data.toString());
+      dispatch({ type: 'SET_TOTAL', payload: data1 });
+    });
+  }, [blocks, api, dispatch]);
 
   const data = {
-    labels: ['Investors', 'Tenants', 'Sellers', 'Awaiting Sellers'],
+    labels: ['Investors', 'Servicers', 'Tenants', 'Sellers', 'A_Sellers', 'A_Servicers '],
     datasets: [
       {
         label: '# of roles',
-        data: [inv_nbr, tenant_nbr, seller_nbr, awaiting_seller_nbr],
+        data: [
+          inv_nbr,
+          servicer_nbr,
+          tenant_nbr,
+          seller_nbr,
+          awaiting_seller_nbr,
+          awaiting_servicer_nbr,
+        ],
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(255, 0, 255, 1)',
+          'rgba(255, 0, 151, 1)',
         ],
         borderColor: [
           'rgba(255, 99, 132, 1)',
           'rgba(54, 162, 235, 1)',
           'rgba(255, 206, 86, 1)',
           'rgba(75, 192, 192, 1)',
+          'rgba(255, 0, 255, 1)',
+          'rgba(255, 0, 151, 1)',
         ],
-        borderWidth: 2,
+        borderWidth: 1,
       },
     ],
   };

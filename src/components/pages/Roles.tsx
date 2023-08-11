@@ -13,17 +13,29 @@ export default function Roles() {
   const { address, role, balance, dispatch0 } = useAccountContext();
   const { ayes, nay, role_in_session, council_members, dispatch1 } = useConcilSessionContext();
 
-  function handleRoles0(): void {
+  useEffect(() => {
+    if (!api || !selectedAccount) return;
+    let address0 = selectedAccount.address;
+    api.query.rolesModule.requestedRoles(address0, (data: any) => {
+      let data0 = data.toHuman();
+      console.log('existing data ' + data0);
+      let r_session = data0?.role.toString();
+
+      dispatch1({ type: 'SET_ROLE_IN_SESSION', payload: r_session });
+    });
+  }, [selectedAccount, blocks, dispatch1, api]);
+
+  useEffect(() => {
     if (!api || !selectedAccount) return;
     let address0 = selectedAccount.address;
 
     dispatch0({ type: 'SET_ADDRESS', payload: address0 });
-    api.query.rolesModule.accountsRolesLog(address, (roles: string[]) => {
+    api.query.rolesModule.accountsRolesLog(address0, (roles: string[]) => {
       let rl = roles;
       dispatch0({ type: 'SET_ROLES', payload: rl });
     });
 
-    api.query.system.account(address, ({ data: free }: { data: { free: BN } }) => {
+    api.query.system.account(address0, ({ data: free }: { data: { free: BN } }) => {
       let { free: balance1 } = free;
 
       dispatch0({ type: 'SET_BALANCE', payload: balance1 });
@@ -43,37 +55,11 @@ export default function Roles() {
             let no = data1.nays.length;
             dispatch1({ type: 'SET_AYES', payload: yes });
             dispatch1({ type: 'SET_NAY', payload: no });
-            console.log('number of yes:', ayes);
           }
         });
       }
     });
-  }
-
-  function handleRoles1(): void {
-    if (!api || !selectedAccount) return;
-    let address0 = selectedAccount.address;
-    api.query.rolesModule.requestedRoles(address0, (data: any) => {
-      if (data !== '' || data !== null) {
-        let data0 = data.toHuman();
-        if (data0 !== null) {
-          console.log('existing data ' + data0);
-          let r_session = data0.role.toString();
-
-          dispatch1({ type: 'SET_ROLE_IN_SESSION', payload: r_session });
-        }
-      }
-      console.log('the role in session is: ', role_in_session);
-    });
-  }
-
-  useEffect(() => {
-    handleRoles0();
-  }, [blocks, selectedAccount, api]);
-
-  useEffect(() => {
-    handleRoles1();
-  }, [blocks, selectedAccount, api]);
+  }, [selectedAccount, api, dispatch0, dispatch1, blocks]);
 
   return (
     <div className="flex flex-col py-5 justify-evenly">
@@ -88,10 +74,19 @@ export default function Roles() {
             : role.map((value: string, index: number) => <p key={index}>{value.toString()}</p>)}
         </h1>
         <h1 className="flex flex-col">
-          Last Requested Role: {!role_in_session ? 'None' : role_in_session}
+          Last Requested Role:{' '}
+          {!role_in_session || role.includes(role_in_session) ? 'None' : role_in_session}
           <br />
-          Referendum Status
-          <Referendum />
+          <div>
+            <header>Referendum Status</header>
+            <p>
+              {!role_in_session || role.includes(role_in_session) ? (
+                'No active referendum'
+              ) : (
+                <Referendum />
+              )}
+            </p>
+          </div>
         </h1>
       </div>
       <br />

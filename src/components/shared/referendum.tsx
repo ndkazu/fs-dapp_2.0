@@ -1,22 +1,26 @@
 import React from 'react';
 import { useConcilSessionContext } from '../../contexts/CouncilSessionContext';
+import { useAccountContext } from '../../contexts/Account_Context';
 import { Progress, Space } from 'antd';
 
 function Referendum() {
-  const { ayes, role_in_session, council_members } = useConcilSessionContext();
+  const { ayes, nay, role_in_session, council_members } = useConcilSessionContext();
+  const { role } = useAccountContext();
 
   const yes = Number(((ayes / council_members.length) * 100).toFixed(1));
 
   return (
     <div>
-      {role_in_session ? (
+      {
         <Space wrap>
           <Progress type="circle" percent={yes} size={80}></Progress>
-          <Progress type="circle" percent={100 - yes} size={80} status="exception"></Progress>
+          {ayes + nay > 0 ? (
+            <Progress type="circle" percent={100 - yes} size={80} status="exception"></Progress>
+          ) : (
+            <div>No votes yet</div>
+          )}
         </Space>
-      ) : (
-        <div>No active referendum</div>
-      )}
+      }
     </div>
   );
 }

@@ -33,7 +33,9 @@ export default function SideBar() {
             label="Status"
             className="p-2"
           >
-            <Sidebar.Item href="#">Roles</Sidebar.Item>
+            <Sidebar.Item href="#">
+              <NavLink to="roles">Roles</NavLink>
+            </Sidebar.Item>
             <Sidebar.Item href="#">Assets</Sidebar.Item>
             <Sidebar.Item href="#">Referendums</Sidebar.Item>
           </Sidebar.Collapse>

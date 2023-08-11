@@ -14,6 +14,8 @@ const initialState: AppState = {
   inv_nbr: 0,
   seller_nbr: 0,
   awaiting_seller_nbr: 0,
+  servicer_nbr: 0,
+  awaiting_servicer_nbr: 0,
   tenant_nbr: 0,
   treasury_balance: undefined,
 };
@@ -27,6 +29,8 @@ type Action =
   | { type: 'SET_INVESTORS_NBR'; payload: number }
   | { type: 'SET_SELLERS_NBR'; payload: number }
   | { type: 'SET_A_SELLERS_NBR'; payload: number }
+  | { type: 'SET_SERVICER_NBR'; payload: number }
+  | { type: 'SET_A_SERVICER_NBR'; payload: number }
   | { type: 'SET_TENANTS_NBR'; payload: number }
   | { type: 'SET_TOTAL'; payload: number }
   | { type: 'SET_TREASURY_BALANCE'; payload: BN };
@@ -48,6 +52,11 @@ function reducer(state: AppState, action: Action): AppState {
     case 'SET_SELLERS_NBR':
       return { ...state, seller_nbr: action.payload };
     case 'SET_A_SELLERS_NBR':
+      return { ...state, awaiting_seller_nbr: action.payload };
+
+    case 'SET_SERVICER_NBR':
+      return { ...state, seller_nbr: action.payload };
+    case 'SET_A_SERVICER_NBR':
       return { ...state, awaiting_seller_nbr: action.payload };
     case 'SET_TENANTS_NBR':
       return { ...state, tenant_nbr: action.payload };
@@ -84,6 +93,8 @@ export function AppProvider({ children }: Props) {
       inv_nbr,
       seller_nbr,
       awaiting_seller_nbr,
+      servicer_nbr,
+      awaiting_servicer_nbr,
       tenant_nbr,
       treasury_balance,
     },
@@ -101,6 +112,8 @@ export function AppProvider({ children }: Props) {
         inv_nbr,
         seller_nbr,
         awaiting_seller_nbr,
+        servicer_nbr,
+        awaiting_servicer_nbr,
         tenant_nbr,
         treasury_balance,
         dispatch,

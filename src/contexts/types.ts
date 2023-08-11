@@ -14,6 +14,8 @@ export interface AppState {
   inv_nbr: number;
   seller_nbr: number;
   awaiting_seller_nbr: number;
+  servicer_nbr: number;
+  awaiting_servicer_nbr: number;
   tenant_nbr: number;
   treasury_balance: BN | undefined;
 }
@@ -38,4 +40,4 @@ export const isRoleValid = (_role: string): boolean => {
   return ROLES.indexOf(_role) !== -1;
 };
 
-export const ROLES = ['INVESTOR', 'TENANT', 'SERVICER', 'SELLER', 'NOTARY', 'REPRESENTATIVE'];
+export const ROLES = ['INVESTOR', 'TENANT', 'SELLER', 'SERVICER', 'NOTARY', 'REPRESENTATIVE'];
