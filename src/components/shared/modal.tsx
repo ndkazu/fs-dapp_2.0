@@ -74,7 +74,7 @@ const RolesApp: React.FC = () => {
       {!(event === 'No Roles' || showToast === false) ? (
         <Toast
           className={
-            'shadow-md rounded-md flex items-start text-white text-xl font-bold' +
+            'shadow-md rounded-md flex items-start text-white text-2xl font-bold' +
             (warning === true ? ' bg-red-500 animate-bounce ' : ' bg-blue-500  animate-pulse')
           }
         >
