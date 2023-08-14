@@ -24,9 +24,7 @@ export default function SideBar() {
         </Sidebar.ItemGroup>
         <Sidebar.ItemGroup>
           <Sidebar.Item labelColor="white" href="#" icon={MdDashboard} className="p-3">
-            <nav>
-              <NavLink to="dashboard">Dashboard</NavLink>
-            </nav>
+            <NavLink to="dashboard">Dashboard</NavLink>
           </Sidebar.Item>
           <Sidebar.Collapse
             icon={MdSignalWifiStatusbarConnectedNoInternet4}

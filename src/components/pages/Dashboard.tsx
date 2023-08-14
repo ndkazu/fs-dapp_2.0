@@ -62,7 +62,14 @@ export default function Dashboard() {
   }, [blocks, api, dispatch]);
 
   const data = {
-    labels: ['Investors', 'Servicers', 'Tenants', 'Sellers', 'A_Sellers', 'A_Servicers '],
+    labels: [
+      'Investors',
+      'Servicers',
+      'Tenants',
+      'Sellers',
+      'Awaiting_Sellers',
+      'Awaiting_Servicers ',
+    ],
     datasets: [
       {
         label: '# of roles',
@@ -80,7 +87,7 @@ export default function Dashboard() {
           'rgba(255, 206, 86, 1)',
           'rgba(75, 192, 192, 1)',
           'rgba(255, 0, 255, 1)',
-          'rgba(255, 0, 151, 1)',
+          'rgba(0, 0, 151, 1)',
         ],
         borderColor: [
           'rgba(255, 99, 132, 1)',
@@ -88,7 +95,7 @@ export default function Dashboard() {
           'rgba(255, 206, 86, 1)',
           'rgba(75, 192, 192, 1)',
           'rgba(255, 0, 255, 1)',
-          'rgba(255, 0, 151, 1)',
+          'rgba(0, 0, 151, 1)',
         ],
         borderWidth: 1,
       },
@@ -96,7 +103,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-row justify-between">
+    <div className="flex flex-row justify-between p-6">
       <div>
         <h1 className="text-3xl text-slate-700 font-bold">DASHBOARD</h1>
         <p className="text-xl font-bold">

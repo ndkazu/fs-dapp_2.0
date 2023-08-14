@@ -17,7 +17,7 @@ function Referendum() {
           {ayes + nay > 0 ? (
             <Progress type="circle" percent={100 - yes} size={80} status="exception"></Progress>
           ) : (
-            <div>No votes yet</div>
+            <p>No votes yet</p>
           )}
         </Space>
       }

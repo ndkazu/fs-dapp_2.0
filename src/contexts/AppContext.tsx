@@ -57,7 +57,7 @@ function reducer(state: AppState, action: Action): AppState {
     case 'SET_SERVICER_NBR':
       return { ...state, seller_nbr: action.payload };
     case 'SET_A_SERVICER_NBR':
-      return { ...state, awaiting_seller_nbr: action.payload };
+      return { ...state, awaiting_servicer_nbr: action.payload };
     case 'SET_TENANTS_NBR':
       return { ...state, tenant_nbr: action.payload };
     case 'SET_TOTAL':

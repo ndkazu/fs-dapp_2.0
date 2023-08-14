@@ -5,6 +5,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { ROLES } from '../../contexts/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { Toast } from 'flowbite-react';
+import { NotificationTwoTone, WarningTwoTone } from '@ant-design/icons';
 
 const RolesApp: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -28,9 +29,10 @@ const RolesApp: React.FC = () => {
     } else {
       let who = selectedAccount.address;
       const tx = await api.tx.rolesModule.setRole(who, ROLES[num].toString());
+      const fees = await tx.paymentInfo(who);
       const injector = await web3FromAddress(who);
       tx.signAndSend(who, { signer: injector.signer }, ({ status, events, dispatchError }) => {
-        if (dispatchError) {
+        if (dispatchError && status.isInBlock) {
           if (dispatchError.isModule) {
             console.log(`Current status: ${status.type}`);
             // for module errors, we have the section indexed, lookup
@@ -42,11 +44,14 @@ const RolesApp: React.FC = () => {
 
             console.log(`${section}.${name}: ${docs.join(' ')}`);
           }
-        } else if (status.isFinalized || status.isInBlock) {
+        } else if (status.isInBlock) {
+          console.log(`Fees: ${fees.partialFee}`);
           console.log(`Current status: ${status.type}`);
-          events.forEach(({ event: { method, section } }) => {
+          events.forEach(({ event: { method, section, data } }) => {
             if (section.toString().includes('rolesModule')) {
-              setEvents(method.toString());
+              let meth = method.toString() + '\n';
+              let payed = '\n' + fees.partialFee.toString() + ' FS';
+              setEvents(`${meth} =>Paid fees: ${payed} `);
               setShowToast(true);
               setWarning(false);
             }
@@ -71,19 +76,28 @@ const RolesApp: React.FC = () => {
       >
         Select a Role
       </Button>
-      {!(event === 'No Roles' || showToast === false) ? (
-        <Toast
-          className={
-            'shadow-md rounded-md flex items-start text-white text-2xl font-bold' +
-            (warning === true ? ' bg-red-500 animate-bounce ' : ' bg-blue-500  animate-pulse')
-          }
-        >
-          <div className="ml-3 text-sm font-normal">{event}</div>
-          <Toast.Toggle
-            onClick={() => {
-              setShowToast(false);
-            }}
-          />
+      {!(showToast === false) ? (
+        <Toast>
+          <div
+            className={
+              'shadow-md rounded-md flex  text-white text-xl items-center justify-center ' +
+              (warning === true ? ' bg-red-500 animate-bounce ' : ' bg-green-600  animate-pulse')
+            }
+          >
+            <div>
+              {!(warning === true) ? (
+                <NotificationTwoTone twoToneColor="#52c41a" className="h-8 w-8" />
+              ) : (
+                <WarningTwoTone twoToneColor="#eb2f96" className="h-8 w-8" />
+              )}
+            </div>
+            <div className="p-5">{event}</div>
+            <Toast.Toggle
+              onClick={() => {
+                setShowToast(false);
+              }}
+            />
+          </div>
         </Toast>
       ) : (
         <div className=" p-5"> </div>
