@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
+import { useAccountContext } from '../../contexts/Account_Context';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import BN from 'bn.js';
@@ -23,6 +24,7 @@ export default function Dashboard() {
     selectedAccount,
     dispatch,
   } = useAppContext();
+  const { role } = useAccountContext();
 
   useEffect(() => {
     if (!api) return;
@@ -107,7 +109,7 @@ export default function Dashboard() {
       <div>
         <h1 className="text-3xl text-slate-700 font-bold">DASHBOARD</h1>
         <p className="text-xl font-bold">
-          House Fund: {!treasury_balance ? '0' : toUnit(treasury_balance, 3).toString()}
+          House Fund: {!treasury_balance ? '0' : toUnit(treasury_balance, 3).toString()} FS
         </p>
         <p className="text-xl font-bold">Total Number of Users: {total_users_nbr}</p>
       </div>
@@ -121,7 +123,10 @@ export default function Dashboard() {
         ) : (
           <NavLink
             to="/roles"
-            className="rounded-md bg-neutral-900 text-white px-4 py-1 animate-pulse"
+            className={
+              'rounded-md bg-neutral-900  px-4 py-1 ' +
+              (role.length < 3 ? 'animate-pulse text-yellow-300' : 'text-white')
+            }
           >
             Role Status
           </NavLink>

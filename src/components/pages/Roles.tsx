@@ -8,6 +8,7 @@ import { toUnit } from '../shared/utils';
 import RolesApp from '../shared/modal';
 import Referendum from '../shared/referendum';
 import { Card, Col, Space } from 'antd';
+import Identicon from '@polkadot/react-identicon';
 
 export default function Roles() {
   const { api, blocks, selectedAccount } = useAppContext();
@@ -66,7 +67,29 @@ export default function Roles() {
       <Space direction="horizontal" size={100} style={{ display: 'flex' }} align="center">
         <Col span={70}>
           <Card title="Your wallet" size="default">
-            <p>Balance: {!balance ? '0' : toUnit(balance, 3).toString()}</p>
+            {selectedAccount ? (
+              <div>
+                <p className="text-xl">
+                  <Identicon
+                    value={selectedAccount.address}
+                    size={30}
+                    theme={'polkadot'}
+                    className="px-1 justify-center align-middle"
+                  />
+                  {' ' +
+                    selectedAccount.meta.name +
+                    ' | ' +
+                    selectedAccount.address.slice(0, 6) +
+                    '...' +
+                    selectedAccount.address.slice(-6, -1)}
+                </p>
+                <p className="text-xl">
+                  Balance: {!balance ? '0' : toUnit(balance, 3).toString()} FS
+                </p>
+              </div>
+            ) : (
+              <div>No Wallet Connected...</div>
+            )}
           </Card>
         </Col>
 
@@ -76,20 +99,26 @@ export default function Roles() {
               Your Roles:{' '}
               {!(role.length > 0)
                 ? 'None'
-                : role.map((value: string, index: number) => <p key={index}>{value.toString()}</p>)}
+                : role.map((value: string, index: number) => (
+                    <p key={index} className="font-bold text-green-700 text-xl">
+                      {value.toString()}
+                    </p>
+                  ))}
             </h1>
           </Card>
         </Col>
 
         <Col span={70}>
           <Card title="Requests status" size="default">
-            <h1 className="flex flex-col px-4">
+            <h1 className="flex flex-col px-4 ">
               Last Requested Role:{' '}
-              {!role_in_session || role.includes(role_in_session) ? 'None' : role_in_session}
+              <p className="font-bold text-red-800 text-xl">
+                {!role_in_session || role.includes(role_in_session) ? 'None' : role_in_session}
+              </p>
               <br />
               <div>
-                <header>Referendum Status</header>
-                <p>
+                <header>Referendum Status:</header>
+                <p className="text-xl font-bold">
                   {!role_in_session || role.includes(role_in_session) ? (
                     'No active referendum'
                   ) : (
