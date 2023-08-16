@@ -63,6 +63,8 @@ export default function Dashboard() {
     });
   }, [blocks, api, dispatch]);
 
+  const maxRoles = Number(api?.consts.rolesModule.maxRoles);
+
   const data = {
     labels: [
       'Investors',
@@ -125,7 +127,7 @@ export default function Dashboard() {
             to="/roles"
             className={
               'rounded-md bg-neutral-900  px-4 py-1 ' +
-              (role.length < 3 ? 'animate-pulse text-yellow-300' : 'text-white')
+              (role.length < maxRoles ? 'animate-pulse text-yellow-300' : 'text-white')
             }
           >
             Role Status
