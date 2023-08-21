@@ -9,6 +9,7 @@ import RolesApp from '../shared/modal';
 import Referendum from '../shared/referendum';
 import { Card, Col, Space } from 'antd';
 import Identicon from '@polkadot/react-identicon';
+import queryPublishedCredentials from '../shared/Credentials';
 
 export default function Roles() {
   const { api, blocks, selectedAccount } = useAppContext();
@@ -42,8 +43,8 @@ export default function Roles() {
       dispatch0({ type: 'SET_BALANCE', payload: balance1 });
     });
 
-    api.query.council.members((who: InjectedAccountWithMeta[]) => {
-      dispatch1({ type: 'SET_COUNCIL_MEMBERS', payload: who });
+    api.query.council.members((who: any) => {
+      dispatch1({ type: 'SET_COUNCIL_MEMBERS', payload: who as InjectedAccountWithMeta[] });
     });
     api.query.backgroundCouncil.proposals((hash: string[]) => {
       if (hash.length > 0) {
@@ -135,6 +136,13 @@ export default function Roles() {
 
         <div className="flex flex-row items-start space-x-3 ">
           <RolesApp />
+          <button
+            onClick={() => {
+              queryPublishedCredentials();
+            }}
+          >
+            CREDENTIALS
+          </button>
         </div>
       </Space>
     </div>

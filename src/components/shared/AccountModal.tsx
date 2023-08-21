@@ -51,7 +51,7 @@ function AccountModal() {
   useEffect(() => {
     if (!api || !selectedAccount) return;
 
-    api.query.system.number((block: number) => {
+    api.query.system.number((block: any) => {
       dispatch({ type: 'SET_BLOCKS', payload: block.toString() });
     });
   }, [api, selectedAccount, dispatch]);
