@@ -68,7 +68,7 @@ const RolesApp: React.FC = () => {
   }, [event]);
 
   return (
-    <>
+    <p className="flex-col space-y-2">
       <Button
         type="primary"
         className="bg-blue-600 text-white font-bold py-2 pb-10 text-xl"
@@ -91,7 +91,7 @@ const RolesApp: React.FC = () => {
                 <WarningTwoTone twoToneColor="#eb2f96" className="h-8 w-8" />
               )}
             </div>
-            <div className="p-5">{event}</div>
+            <div className="p-2">{event}</div>
             <Toast.Toggle
               onClick={() => {
                 setShowToast(false);
@@ -100,7 +100,7 @@ const RolesApp: React.FC = () => {
           </div>
         </Toast>
       ) : (
-        <div className=" p-5"> </div>
+        <div className=" p-2"> </div>
       )}
 
       <Drawer title="Basic Drawer" placement="right" onClose={onClose} open={open}>
@@ -134,7 +134,7 @@ const RolesApp: React.FC = () => {
           </Button>
         </p>
       </Drawer>
-    </>
+    </p>
   );
 };
 
