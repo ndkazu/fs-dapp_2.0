@@ -18,6 +18,9 @@ export interface AppState {
   awaiting_servicer_nbr: number;
   tenant_nbr: number;
   treasury_balance: BN | undefined;
+  web3Name: string | undefined;
+  attester: string | undefined;
+  credentials: string | undefined;
 }
 
 export interface AccountContextState {

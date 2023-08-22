@@ -1,22 +1,42 @@
 import axios from 'axios';
-
+import type { KeyringPair } from '@polkadot/keyring/types';
 import * as Kilt from '@kiltprotocol/sdk-js';
 
-export async function queryPublishedCredentials() {
-  const api = await Kilt.connect('wss://peregrine.kilt.io/');
-  const encodedJohnDoeDetails = await api.call.did.queryByWeb3Name('john_doe');
+export async function queryAccountWeb3Name(
+  lookupAccountAddress: KeyringPair['address'],
+): Promise<Kilt.Did.Web3Name | undefined> {
+  const api = Kilt.ConfigService.get('api');
 
-  // This function will throw if johnDoeOwner does not exist
+  const encodedLinkedDetails = await api.call.did.queryByAccount(
+    Kilt.Did.accountToChain(lookupAccountAddress),
+  );
+  const { web3Name } = Kilt.Did.linkedInfoFromChain(encodedLinkedDetails);
+  if (web3Name) {
+    console.log(`web3name for account "${lookupAccountAddress}" -> "${web3Name}"`);
+  } else {
+    console.log(`Account "${lookupAccountAddress}" does not have a linked web3name.`);
+  }
+
+  return web3Name;
+}
+
+export async function queryPublishedCredentials(web3Name: string | undefined) {
+  if (!web3Name) return;
+
+  const api = await Kilt.connect('wss://peregrine.kilt.io/');
+  const encodedDetails = await api.call.did.queryByWeb3Name(web3Name);
+
+  // This function will throw if web3Name does not exist
   const {
     document: { uri },
-  } = Kilt.Did.linkedInfoFromChain(encodedJohnDoeDetails);
-  console.log(`My name is john_doe and this is my DID: "${uri}"`);
+  } = Kilt.Did.linkedInfoFromChain(encodedDetails);
+  console.log(`My name is ${web3Name} and this is my DID: "${uri}"`);
 
-  const johnDoeDidDocument = await Kilt.Did.resolve(uri);
+  const DidDocument = await Kilt.Did.resolve(uri);
   console.log(`John Doe's DID Document:`);
-  console.log(JSON.stringify(johnDoeDidDocument, null, 2));
+  console.log(JSON.stringify(DidDocument, null, 2));
 
-  const endpoints = johnDoeDidDocument?.document?.service;
+  const endpoints = DidDocument?.document?.service;
   if (!endpoints) {
     console.log('No endpoints for the DID.');
     return [];
@@ -35,12 +55,11 @@ export async function queryPublishedCredentials() {
     if (revoked) {
       throw new Error('The credential has been revoked, hence it is not valid.');
     }
-    console.log(
-      `John Doe's credential is valid and has been attested by ${attester}!`,
-      JSON.stringify(credential, null, 2),
-    );
+
+    let res = [attester, JSON.stringify(credential, null, 2)];
+    return res;
   } catch {
-    console.log("John Doe's credential is not valid.");
+    console.log(`${web3Name}'s credential is not valid.`);
   }
 
   await Kilt.disconnect();

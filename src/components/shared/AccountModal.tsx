@@ -3,6 +3,7 @@ import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { ChangeEvent, useEffect } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
 import Identicon from '@polkadot/react-identicon';
+import { queryAccountWeb3Name } from './Credentials';
 
 const NAME = 'fs-dapp';
 
@@ -28,6 +29,10 @@ function AccountModal() {
     if (allAccounts.length === 1) {
       dispatch({ type: 'SET_SELECTED_ACCOUNT', payload: allAccounts[0] });
     }
+    if (selectedAccount) {
+      const webname = await queryAccountWeb3Name(selectedAccount.address);
+      dispatch({ type: 'SET_WEB3_NAME', payload: webname });
+    }
   };
 
   const handleConnectionChange = () => {
@@ -42,6 +47,7 @@ function AccountModal() {
       throw Error('NO_ACCOUNT_FOUND');
     }
     dispatch({ type: 'SET_SELECTED_ACCOUNT', payload: account });
+    dispatch({ type: 'SET_WEB3_NAME', payload: account.address });
   };
 
   useEffect(() => {

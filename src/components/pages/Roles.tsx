@@ -9,10 +9,11 @@ import RolesApp from '../shared/modal';
 import Referendum from '../shared/referendum';
 import { Card, Col, Space } from 'antd';
 import Identicon from '@polkadot/react-identicon';
-import queryPublishedCredentials from '../shared/Credentials';
+import { queryPublishedCredentials } from '../shared/Credentials';
 
 export default function Roles() {
-  const { api, blocks, selectedAccount } = useAppContext();
+  const { api, blocks, selectedAccount, web3Name, attester, credentials, dispatch } =
+    useAppContext();
   const { role, balance, dispatch0 } = useAccountContext();
   const { role_in_session, dispatch1 } = useConcilSessionContext();
 
@@ -46,6 +47,18 @@ export default function Roles() {
     api.query.council.members((who: any) => {
       dispatch1({ type: 'SET_COUNCIL_MEMBERS', payload: who as InjectedAccountWithMeta[] });
     });
+    if (web3Name) {
+      const data = async () => {
+        let data_all = await queryPublishedCredentials(web3Name);
+        if (data_all) {
+          dispatch({ type: 'SET_ATTESTER', payload: data_all[0] });
+          dispatch({ type: 'SET_CREDENTIALS', payload: data_all[1] });
+        } else {
+          dispatch({ type: 'SET_ATTESTER', payload: 'NONE' });
+          dispatch({ type: 'SET_CREDENTIALS', payload: 'NONE' });
+        }
+      };
+    }
     api.query.backgroundCouncil.proposals((hash: string[]) => {
       if (hash.length > 0) {
         let hash0 = hash[0];
@@ -61,7 +74,7 @@ export default function Roles() {
         });
       }
     });
-  }, [selectedAccount, api, dispatch0, dispatch1, blocks]);
+  }, [selectedAccount, api, dispatch0, dispatch1, dispatch, web3Name, blocks]);
 
   return (
     <div className="p-10">
@@ -86,6 +99,9 @@ export default function Roles() {
                 </p>
                 <p className="text-xl">
                   Balance: {!balance ? '0' : toUnit(balance, 3).toString()} FS
+                </p>
+                <p className="text-xl">
+                  Credentials: {!credentials ? 'No Credentials' : credentials}
                 </p>
               </div>
             ) : (
@@ -136,13 +152,6 @@ export default function Roles() {
 
         <div className="flex flex-row items-start space-x-3 ">
           <RolesApp />
-          <button
-            onClick={() => {
-              queryPublishedCredentials();
-            }}
-          >
-            CREDENTIALS
-          </button>
         </div>
       </Space>
     </div>

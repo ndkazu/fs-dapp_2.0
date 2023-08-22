@@ -18,6 +18,9 @@ const initialState: AppState = {
   awaiting_servicer_nbr: 0,
   tenant_nbr: 0,
   treasury_balance: undefined,
+  web3Name: undefined,
+  attester: undefined,
+  credentials: undefined,
 };
 
 type Action =
@@ -33,7 +36,10 @@ type Action =
   | { type: 'SET_A_SERVICER_NBR'; payload: number }
   | { type: 'SET_TENANTS_NBR'; payload: number }
   | { type: 'SET_TOTAL'; payload: number }
-  | { type: 'SET_TREASURY_BALANCE'; payload: BN };
+  | { type: 'SET_TREASURY_BALANCE'; payload: BN }
+  | { type: 'SET_WEB3_NAME'; payload: string | undefined }
+  | { type: 'SET_ATTESTER'; payload: string | undefined }
+  | { type: 'SET_CREDENTIALS'; payload: string | undefined };
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -64,6 +70,12 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, total_users_nbr: action.payload };
     case 'SET_TREASURY_BALANCE':
       return { ...state, treasury_balance: action.payload };
+    case 'SET_WEB3_NAME':
+      return { ...state, web3Name: action.payload };
+    case 'SET_ATTESTER':
+      return { ...state, attester: action.payload };
+    case 'SET_CREDENTIALS':
+      return { ...state, credentials: action.payload };
 
     default:
       return state;
@@ -97,6 +109,9 @@ export function AppProvider({ children }: Props) {
       awaiting_servicer_nbr,
       tenant_nbr,
       treasury_balance,
+      web3Name,
+      attester,
+      credentials,
     },
     dispatch,
   ] = useReducer(reducer, initialState);
@@ -116,6 +131,9 @@ export function AppProvider({ children }: Props) {
         awaiting_servicer_nbr,
         tenant_nbr,
         treasury_balance,
+        web3Name,
+        attester,
+        credentials,
         dispatch,
       }}
     >
