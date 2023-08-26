@@ -12,8 +12,7 @@ import Identicon from '@polkadot/react-identicon';
 import { queryPublishedCredentials } from '../shared/Credentials';
 
 export default function Roles() {
-  const { api, blocks, selectedAccount, web3Name, attester, credentials, dispatch } =
-    useAppContext();
+  const { api, blocks, selectedAccount, web3Name, credentials, dispatch } = useAppContext();
   const { role, balance, dispatch0 } = useAccountContext();
   const { role_in_session, dispatch1 } = useConcilSessionContext();
 
@@ -48,7 +47,7 @@ export default function Roles() {
       dispatch1({ type: 'SET_COUNCIL_MEMBERS', payload: who as InjectedAccountWithMeta[] });
     });
     if (web3Name) {
-      const data = async () => {
+      (async () => {
         let data_all = await queryPublishedCredentials(web3Name);
         if (data_all) {
           dispatch({ type: 'SET_ATTESTER', payload: data_all[0] });
@@ -57,7 +56,7 @@ export default function Roles() {
           dispatch({ type: 'SET_ATTESTER', payload: 'NONE' });
           dispatch({ type: 'SET_CREDENTIALS', payload: 'NONE' });
         }
-      };
+      })();
     }
     api.query.backgroundCouncil.proposals((hash: string[]) => {
       if (hash.length > 0) {
