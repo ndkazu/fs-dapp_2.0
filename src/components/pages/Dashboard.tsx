@@ -7,7 +7,7 @@ import BN from 'bn.js';
 import { toUnit } from '../shared/utils';
 import { NavLink } from 'react-router-dom';
 ChartJS.register(ArcElement, Tooltip, Legend);
-const treasury_address = '5EYCAe5ijiYfyeZ2JJCGq56LmPyNRAKzpG4QkoQkkQNB5e6Z';
+const treasury_address = '5EYCAe5h8JVpdkpBnytXdq1R8u69C3a7zi7iuipxUc8NVHqh';
 
 export default function Dashboard() {
   const {
